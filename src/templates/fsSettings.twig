@@ -1,0 +1,169 @@
+{% import "_includes/forms" as forms %}
+
+<div class="readable" style="margin-top: 24px;">
+    <blockquote class="note tip">
+        <p>
+            Hetzner Object Storage is S3-compatible. Buckets are reachable via path-style URLs (recommended) that look like this:<br><br>
+
+            <strong>https://[region].your-objectstorage.com/[bucket-name]</strong><br><br>
+
+            Virtual-host style URLs (<strong>https://[bucket-name].[region].your-objectstorage.com</strong>) are also supported.<br><br>
+
+            The "Region" setting below is the Hetzner location your bucket was created in, e.g. <strong>fsn1</strong> (Falkenstein), <strong>nbg1</strong> (Nuremberg) or <strong>hel1</strong> (Helsinki).<br><br>
+
+            The "Endpoint" setting is optional – if left blank, it will be derived from the region as <strong>https://[region].your-objectstorage.com</strong>.<br><br>
+
+            To be able to set the "Base URL" above, you need to enable the "Files in this filesystem have public URLs" lightswitch.<br>
+            <strong>The value should be the whole bucket URL, i.e. https://[region].your-objectstorage.com/[bucket-name]. Do not add the subfolder from the "Subfolder" setting below, if you've added one.</strong>
+        </p>
+    </blockquote>
+</div>
+
+<hr>
+
+{{ forms.autosuggestField({
+    label: "Region"|t('hetzner-object-storage'),
+    id: 'region',
+    class: 'ltr',
+    name: 'region',
+    suggestEnvVars: true,
+    suggestAliases: true,
+    value: (fs is defined ? fs.region : null),
+    errors: (fs is defined ? fs.getErrors('region') : null),
+    required: true,
+    placeholder: "fsn1"|t('hetzner-object-storage')
+}) }}
+
+{{ forms.autosuggestField({
+    label: "Bucket"|t('hetzner-object-storage'),
+    id: 'bucket',
+    class: 'ltr',
+    name: 'bucket',
+    suggestEnvVars: true,
+    suggestAliases: true,
+    value: (fs is defined ? fs.bucket : null),
+    errors: (fs is defined ? fs.getErrors('bucket') : null),
+    required: true,
+    placeholder: "your-bucket-name"|t('hetzner-object-storage')
+}) }}
+
+{{ forms.autosuggestField({
+    label: "Endpoint"|t('hetzner-object-storage'),
+    instructions: "Optional. If left blank, the endpoint is derived from the region."|t('hetzner-object-storage'),
+    id: 'endpoint',
+    class: 'ltr',
+    name: 'endpoint',
+    suggestEnvVars: true,
+    suggestAliases: true,
+    value: (fs is defined ? fs.endpoint : null),
+    errors: (fs is defined ? fs.getErrors('endpoint') : null),
+    required: false,
+    placeholder: "https://fsn1.your-objectstorage.com"|t('hetzner-object-storage')
+}) }}
+
+{{ forms.lightswitchField({
+    label: "Use path-style addressing"|t('hetzner-object-storage'),
+    instructions: "Whether the S3 API should be addressed with path-style URLs (https://[region].your-objectstorage.com/[bucket-name]) instead of virtual-host style (https://[bucket-name].[region].your-objectstorage.com). This only affects API requests – public file URLs use the Base URL above."|t('hetzner-object-storage'),
+    id: 'pathStyle',
+    name: 'pathStyle',
+    on: (fs is defined ? fs.pathStyle : true),
+}) }}
+
+{{ forms.autosuggestField({
+    label: "Subfolder"|t('hetzner-object-storage'),
+    instructions: "If you want to use a bucket’s subfolder as a File System, specify the path to use here."|t('hetzner-object-storage'),
+    id: 'subfolder',
+    class: 'ltr',
+    name: 'subfolder',
+    suggestEnvVars: true,
+    suggestAliases: true,
+    value: (fs is defined ? fs.subfolder : null),
+    errors: (fs is defined ? fs.getErrors('subfolder') : null),
+    required: false,
+    placeholder: "path/to/subfolder"|t('hetzner-object-storage')
+}) }}
+
+
+<hr>
+
+<div class="readable">
+    <blockquote class="note tip">
+        <p>
+            Access Key ID and Secret Access Key are called "Credentials" in the Hetzner Cloud Console, and can be created under "Object Storage" > "Manage credentials" > "Generate credentials".
+        </p>
+    </blockquote>
+</div>
+
+<hr>
+
+{{ forms.autosuggestField({
+    label: "Access Key ID"|t('hetzner-object-storage'),
+    id: 'keyId',
+    class: 'ltr',
+    name: 'keyId',
+    suggestEnvVars: true,
+    suggestAliases: true,
+    value: (fs is defined ? fs.keyId : null),
+    errors: (fs is defined ? fs.getErrors('keyId') : null),
+    required: true,
+}) }}
+
+{{ forms.autosuggestField({
+    label: "Secret Access Key"|t('hetzner-object-storage'),
+    id: 'secret',
+    class: 'ltr',
+    name: 'secret',
+    suggestEnvVars: true,
+    suggestAliases: true,
+    value: (fs is defined ? fs.secret : null),
+    errors: (fs is defined ? fs.getErrors('secret') : null),
+    required: true,
+}) }}
+
+
+<hr>
+
+{% set cacheInput %}
+    {% set expires = (fs.expires|length > 0 ? fs.expires|split(' ') : ['', ''])%}
+
+    <div class="flex">
+        <div>
+            {{ forms.text({
+                id: 'expiresAmount',
+                value: expires[0],
+                size: 2,
+                class: 'hetzner-expires-amount'
+            }) }}
+        </div>
+        {{ forms.select({
+            id: 'expiresPeriod',
+            options: periods,
+            value: expires[1],
+            class: 'hetzner-expires-period'
+        }) }}
+    </div>
+    {{ forms.hidden({
+        name: "expires",
+        value: fs.expires,
+        class: "expires-combined"
+    }) }}
+{% endset %}
+
+{{ forms.field({
+    label: "Cache Duration"|t,
+    instructions: "The Cache-Control duration that assets should be uploaded to the cloud with.",
+    id: 'cacheDuration',
+}, cacheInput) }}
+
+{{ forms.selectField({
+    label: "Content Disposition"|t,
+    instructions: "The Content Disposition is a header indicating if the content is expected to be displayed inline in the browser, that is, as a Web page or as part of a Web page, or as an attachment, that is downloaded and saved locally"|t,
+    id: 'contentDisposition',
+    name: 'contentDisposition',
+    options: contentDispositionOptions,
+    value: fs.contentDisposition,
+    class: 'hetzner-content-disposition'
+}) }}
+
+
+{% do view.registerAssetBundle("vaersaagod\\hetznerobjectstorage\\HetznerObjectStorageBundle") %}
