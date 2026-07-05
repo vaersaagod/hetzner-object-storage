@@ -1,40 +1,49 @@
 {
-  "name": "vaersaagod/hetzner-object-storage",
-  "description": "Hetzner Object Storage filesystem for Craft CMS",
-  "type": "craft-plugin",
-  "license": "mit",
-  "support": {
-    "email": "hei@vaersaagod.no",
-    "issues": "https://github.com/vaersaagod/hetzner-object-storage/issues?state=open",
-    "source": "https://github.com/vaersaagod/hetzner-object-storage",
-    "docs": "https://github.com/vaersaagod/hetzner-object-storage",
-    "rss": "https://github.com/vaersaagod/hetzner-object-storage/releases.atom"
-  },
-  "require": {
-    "php": ">=8.2",
-    "craftcms/cms": "^5.10.0",
-    "craftcms/flysystem": "^2.0.0",
-    "league/flysystem-aws-s3-v3": "^3.0.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "vaersaagod\\hetznerobjectstorage\\": "src/"
-    }
-  },
-  "extra": {
-    "handle": "hetzner-object-storage",
-    "name": "Hetzner Object Storage Filesystem",
-    "developer": "Værsågod",
-    "documentationUrl": "https://github.com/vaersaagod/hetzner-object-storage"
-  },
-  "config": {
-    "sort-packages": true,
-    "platform": {
-      "php": "8.2"
+    "name": "vaersaagod/hetzner-object-storage",
+    "description": "Hetzner Object Storage filesystem for Craft CMS",
+    "type": "craft-plugin",
+    "version": "1.0.0-beta.1",
+    "license": "mit",
+    "support":
+    {
+        "email": "hei@vaersaagod.no",
+        "issues": "https://github.com/vaersaagod/hetzner-object-storage/issues?state=open",
+        "source": "https://github.com/vaersaagod/hetzner-object-storage",
+        "docs": "https://github.com/vaersaagod/hetzner-object-storage",
+        "rss": "https://github.com/vaersaagod/hetzner-object-storage/releases.atom"
     },
-    "allow-plugins": {
-      "yiisoft/yii2-composer": true,
-      "craftcms/plugin-installer": true
+    "require":
+    {
+        "php": ">=8.2",
+        "craftcms/cms": "^5.10.0",
+        "craftcms/flysystem": "^2.0.0",
+        "league/flysystem-aws-s3-v3": "^3.0.0"
+    },
+    "autoload":
+    {
+        "psr-4":
+        {
+            "vaersaagod\\hetznerobjectstorage\\": "src/"
+        }
+    },
+    "extra":
+    {
+        "handle": "hetzner-object-storage",
+        "name": "Hetzner Object Storage Filesystem",
+        "developer": "Værsågod",
+        "documentationUrl": "https://github.com/vaersaagod/hetzner-object-storage"
+    },
+    "config":
+    {
+        "sort-packages": true,
+        "platform":
+        {
+            "php": "8.2"
+        },
+        "allow-plugins":
+        {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
     }
-  }
 }
